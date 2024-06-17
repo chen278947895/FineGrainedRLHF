@@ -2,7 +2,7 @@ set -e
 
 # train reward model for F-ERR_sentence
 torchrun --nproc_per_node 1 --standalone --nnodes=1 ./reward_modeling/run_fg_rm.py \
-                --model_name_or_path allenai/longformer-base-4096 \
+                --model_name_or_path /home/chenzhengzong/FineGrainedRLHF/reward_modeling/model/longformer-base-4096 \
                 --train_file ./tasks/qa_feedback/data/F-ERR_sentence/train.json \
                 --validation_file ./tasks/qa_feedback/data/F-ERR_sentence/dev.json \
                 --test_file ./tasks/qa_feedback/data/F-ERR_sentence/dev.json \

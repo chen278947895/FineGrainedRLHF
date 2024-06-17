@@ -1,5 +1,14 @@
-set -e
+# apt install python3.9
+# cd /usr/bin
+# unlink python
+# ln -s /usr/bin/python3.9  python
+# apt install python3-pip
+# pip install -U datasets
 
+
+set -e
+export WANDB_MODE=offline
+export WANDB_API_KEY="f8ce337af5f4303bffcc53e42e87548e36bf624a"
 # train reward model for NF-ERR_subsentence
 torchrun --nproc_per_node 1 --standalone --nnodes=1 ./reward_modeling/run_fg_rm.py \
                 --model_name_or_path allenai/longformer-base-4096 \
