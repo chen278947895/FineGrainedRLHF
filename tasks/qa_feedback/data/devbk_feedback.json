@@ -1,0 +1,55 @@
+[
+  {
+    "question": "{ \"产品名称\": \"鸭鸭羽绒服\",\n\"类目\": \"服装\",\n\"品牌\": \"鸭鸭\",\n\"产品属性\": {\n  \"羽绒含量\": \"90%\",\n  \"防绒技术\": \"用进口防绒针、丝光防绒线、精密缝制\",\n  \"款式\": \"男士、女士、儿童款式及基础款、设计款\",\n  \"防风性\": \"防风\",\n  \"保暖性\": \"保暖\"\n  },\n\"产品价格\": \"29.9元\",\n\"产品卖点\": {\n  \"质量\": \"优良的品质\",\n  \"价格\": \"亲民的价格\",\n  \"国民品牌\": \"是优秀的国民羽绒服品牌\",\n  \"参与方式\": \"点击下方小铃铛参与活动\"\n},\n\"产品优势\": \"在保暖性能、款式设计、质量保证等方面具有很高的优势，性价比高，受到消费者广泛喜爱。\"\n}\n上面是一段【信息】，请你基于【信息】中的内容，生成情感丰富、直白、活跃、互动式、简单易理解、朗朗上口（如：'家人们'、'咱们'、'千万不要错过'、'是不是'、'有没有'）的一段话术，并以强调<开场语>为主，注意只基于其中必要的信息生成丰富的内容，不要提到【信息】中未给出的内容。",
+    "passages": [
+      [
+        "Bloom (Troye Sivan album)",
+        "Bloom (Troye Sivan album)\n\nBloom is the second studio album by Australian singer and songwriter Troye Sivan, released on 31 August 2018 through EMI Australia and Capitol Records.",
+        "The album follows up his 2015 debut studio album, \"Blue Neighbourhood\", and features guest appearances from Gordi and Ariana Grande.",
+        "It was preceded by the release of the singles \"My My My! \", \"The Good Side\", \"Bloom\", \"Dance to This\" and \"Animal\".",
+        "At the ARIA Music Awards of 2018, the album was nominated for three awards; Album of the Year, Best Male Artist and Best Pop Release.",
+        "\"Bloom\" has been called Sivan's \"sex album\", as well as \"darker\", \"more guitar-driven\" and \"more danceable\" than his previous material.",
+        "It has also been described as containing material about defiant gay expression; the first song, \"Seventeen\", is about a sexual experience Sivan had with a man he met on Grindr.",
+        "Sivan wrote most of the album with American musician Leland and Canadian musician Allie X.",
+        "The album's production was primarily handled by Bram Inscore, Oscar G\u00f6rres, Oscar Holter and Ariel Rechtshaid.",
+        "\"My My My!\""
+      ],
+      [
+        "Bloom (Troye Sivan album)",
+        "was released as the lead single from the album on 10 January 2018, and was accompanied by a music video directed by Grant Singer.",
+        "The second single \"The Good Side\", was released nine days later.",
+        "It is an acoustic track about a breakup, with Sivan explaining that the song is an open letter to an ex-boyfriend.",
+        "The title track \"Bloom\", a song about queer desire, was released on 2 May as the third single.",
+        "\"Dance to This\", featuring American singer Ariana Grande, was released on 13 June as the album's fourth single.",
+        "The fifth single, \"Animal\", was released on 9 August.",
+        "On 14 June, Sivan announced a Target special edition would be released featuring two new songs, \"This This\" and \"Running Shoes\".",
+        "The album was released on 31 August 2018 by EMI Music Australia and Capitol Records.",
+        "Sivan is promoting the album via the Bloom Tour, which began on 21 September in Irving, Texas.",
+        "At Metacritic, which assigns a normalised rating out of 100 to reviews from mainstream publications, \"Bloom\" received an average score of 85, based on 15 reviews, indicating \"universal acclaim\".",
+        "Giving the album a perfect score, \"The Independent\"s Douglas Greenwood wrote, \"Making perfect pop isn't easy, but Troye Sivan is a star who's done his homework."
+      ]
+    ],
+    "gold": "Bloom is the second studio album by Australian singer and songwriter Troye Sivan. This album was released on August 31, 2018 through EMI Music Australia and Capitol Records. The album's title track Bloom, a song about anal sex, was promoted using the hashtag \u2018#BopsBoutBottoming, which was trending on Twitter. The song Bloom was released on May 2, 2018 as the third single from Sivan's album Bloom. ",
+    "prediction 1": "大家好！欢迎各位老铁来到官方福利直播间，大家进来一定要先点一下关注，这样可以自动成为我们的会员，后续可以享受一系列的福利活动。特别提醒大家最近天气降温，一定要多加衣服，不要生病哦。北方的朋友们应该已经穿上羽绒服了，南方也出现了大幅降温，大家都想买新羽绒服了对不对，但是质量好的羽绒服价格真心不便宜，一件羽绒服就要大几千，很多人都知道鸭鸭牌羽绒服是咱们的国货之光，今天的直播间给铁子们带来的福利是29.9元秒杀鸭鸭羽绒服。",
+    "feedback": {
+      "errors": [
+        {
+          "error type": "Wrong-Grounding",
+          "explanation": "",
+          "start": 4,
+          "end": 62
+        }
+      ],
+      "missing-info": [],
+      "corrected-prediction": "Bloom is the second studio album by Australian singer and songwriter Troye Sivan, released on 31 August 2018 through EMI Australia and Capitol Records. The title track, a song about queer desire, was released on May 2, 2018 as the third single. "
+    },
+    "preference": [
+      0,
+      1,
+      2,
+      1,
+      0,
+      2
+    ]
+  }
+]

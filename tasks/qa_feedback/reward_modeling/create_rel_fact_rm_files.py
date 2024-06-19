@@ -4,8 +4,13 @@ from collections import defaultdict, Counter
 import argparse
 import re
 import os
+from transformers import AutoTokenizer,LlamaTokenizer
 
-nlp = spacy.load('en_core_web_sm') # Load the English Model
+#zh_core_web_sm
+#en_core_web_sm
+# nlp = spacy.load('en_core_web_sm') # Load the English Model
+
+nlp = spacy.load('zh_core_web_sm') # Load the English Model
 
 IGNORE_TAG = "Ignore"
 SEP_TOKEN = "</s>"
@@ -17,7 +22,20 @@ FACTUAL_ERRORS = ["Wrong-Grounding", "Unverifiable"] # "Wrong-Grounding" refers 
 ERROR_CATEGORIES = [NON_FACTUAL_ERROR_TAG, FACTUAL_ERROR_TAG]
 
 MIN_SUBSENT_WORDS = 5
-
+tokenizer=LlamaTokenizer.from_pretrained('/home/chenzhengzong/from_nlp_group/for_sft_infer/live_script/llama-13b-gpt4_llm_comparision2_clean-154855/')
+tokenizer.add_special_tokens({
+        "eos_token": "</s>",
+        "bos_token": "<s>",
+        "unk_token": "<unk>",
+        "pad_token": "<pad>",
+    })
+def token_2_str(s_text):
+    tokenid = tokenizer(s_text,add_special_tokens=False)
+    token_str = tokenizer.batch_decode(tokenid['input_ids'], skip_special_tokens = True)
+    # token_str = tokenizer.convert_ids_to_tokens(tokenid['input_ids'])
+    return token_str
+def check_sentence_end(text):
+    return text.strip() == '!' or text.strip() == '。' or text.strip() == '.' or text.strip() == '?' or text.strip() == '！'
 
 def get_token_labels(
     args,
@@ -31,12 +49,21 @@ def get_token_labels(
     cur_char_idx = 0
     for i, t in enumerate(tokens):
         l = len(t.strip())
+        # print(t)
         for j in range(cur_char_idx, cur_char_idx + l):
             token_idx2char_idx[i] += [j]
         cur_char_idx = cur_char_idx + l
     
     # sanity check: tokens and text has the same number of non-empty characters
-    assert cur_char_idx == len(''.join(text.strip().split()))
+    token_str = token_2_str(text.strip())
+    # print("token_str",token_str)
+    # print('token_len',len(''.join(token_str)))
+    # print('raw_token_len',len(''.join(text.strip().split())))
+    # print("cur_char_idx",cur_char_idx)
+    # for i in token_str:
+    #     print(i)
+    assert cur_char_idx == len(''.join(token_str))
+    # assert cur_char_idx == len(''.join(text.strip().split()))
     
     """
         orig_char_idx2char_idx: map the original character index to the character index in the tokenized string
@@ -46,6 +73,7 @@ def get_token_labels(
     """
     orig_char_idx2char_idx = {}
     cur_char_idx = 0
+    #把空格、多空格转为不计数的idx
     for i, char in enumerate(text):
         orig_char_idx2char_idx[i] = cur_char_idx
         if char.strip() != '':
@@ -53,12 +81,15 @@ def get_token_labels(
     
     char_idx2label = defaultdict(str)
     for span in spans:
-
+        #起始中文字符，前一个必为中文符号
         start = span["start"]
+        #结束中文符号。！？
         end = span["end"]
         etype = span['error type']
 
-        error_words = text[start:end].strip().split()
+        # error_words = text[start:end].strip().split()
+        error_words=token_2_str(text[start:end].strip())
+
         # filter out error spans that are too short
         # Note: that this only applies to irrelevance / redundant / incoherence errors
         # See Appendix D
@@ -72,8 +103,12 @@ def get_token_labels(
         assert end >= 0
 
         # make sure the left of start index or the end index points to an empty char
-        assert text[start].strip() != '' and (start == 0 or text[start-1].strip() == '')
-        assert (end == len(text) or text[end].strip() == '')
+        # print(text[start].strip())
+        # print(text[start-1].strip())
+        # print(text[end].strip())
+        # assert text[start].strip() != '' and (start == 0 or text[start-1].strip() == '')
+        assert text[start].strip() != '' and (start == 0 or check_sentence_end(text[start-1]))
+        assert (end == len(text) or check_sentence_end(text[end]))
 
         for orig_char_idx in range(start, end):
             char_idx2label[orig_char_idx2char_idx[orig_char_idx]] = e_category   # assuming no overlapped error span
@@ -97,11 +132,18 @@ def get_token_labels(
     # get sentence labels
     sent_labels = []
     error_labels = set()
+    # print(orig_char_idx2char_idx)
+    # print(char_idx2label)
+    # print(token_idx2char_idx)
     for token_idx in range(len(tokens)):
         char_indices = token_idx2char_idx[token_idx]
         labels = [char_idx2label[idx] for idx in char_indices]
 
         # make sure each token finds at most one tag label (see in paper annotation restriction #1)
+        # print(token_idx)
+        # print(char_indices)
+        # print(set(labels))
+        # print(text[121:130])
         assert len(set(labels)) <= 1
         if token_is_sent_starts[token_idx]:
             if token_idx > 0:
@@ -198,11 +240,14 @@ def construct_model_inputs(args, ids, labels, inputs, split):
         answer_token_is_sent_starts = []
         for s in doc.sents:
             s_text = s.text
-            answer_tokens += s_text.split()
+            # answer_tokens += s_text.split()
+            token_str = token_2_str(s_text)
+            answer_tokens += token_str
+
             if args.feedback_level == 'subsentence':
-                answer_token_is_sent_starts += get_subsentence_starts(s_text.split())
+                answer_token_is_sent_starts += get_subsentence_starts(token_str)
             else:
-                answer_token_is_sent_starts += [True] + (len(s_text.split()) - 1) * [False]
+                answer_token_is_sent_starts += [True] + (len(token_str) - 1) * [False]
         text = input['prediction 1']
         answer_token_is_sent_starts[0] = True
 
@@ -224,7 +269,9 @@ def construct_model_inputs(args, ids, labels, inputs, split):
         all_labels += [l for l in token_labels if l != IGNORE_TAG]
 
         # get question tokens
-        question_tokens = input['question'].strip().split()
+        # question_tokens = input['question'].strip().split()
+        question_tokens = token_2_str(input['question'].strip())
+        
         # get default question token error labels
         question_token_labels = [IGNORE_TAG] * len(question_tokens)
 
@@ -233,8 +280,12 @@ def construct_model_inputs(args, ids, labels, inputs, split):
         if not args.ignore_context:
             for i, p in enumerate(input['passages']):
                 title_string = f"wikipage: {p[0]}"
-                p_tokens = title_string.split()
-                p_tokens += ['text:'] + ' '.join(p[1:]).split()
+                # p_tokens = title_string.split()
+                p_tokens = token_2_str(title_string)
+                
+                # p_tokens += ['text:'] + ' '.join(p[1:]).split()
+                token_str=token_2_str(' '.join(p[1:]))
+                p_tokens += ['text:'] + token_str
                 p_token_labels = [IGNORE_TAG] * len(p_tokens)
         
                 passage_tokens += [p_tokens]
@@ -263,7 +314,7 @@ def construct_model_inputs(args, ids, labels, inputs, split):
 
     with open(os.path.join(output_dir, f"{split}.json"), "w") as fout:
         for line in all_results:
-            fout.write(json.dumps(line)+'\n')
+            fout.write(json.dumps(line,ensure_ascii=False)+'\n')
     
     
 def _read_id2example(filename):
@@ -277,7 +328,8 @@ def _read_id2example(filename):
 
 def main(args):
 
-    for split in ["train", "dev"]:
+    # for split in ["train", "dev"]:
+    for split in ["devbk"]:
         id2example = _read_id2example(os.path.join(args.data_dir, f"{split}_feedback.json"))
         labels = []
         inputs = []
