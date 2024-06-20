@@ -11,7 +11,7 @@ from transformers import AutoTokenizer,LlamaTokenizer
 # nlp = spacy.load('en_core_web_sm') # Load the English Model
 
 nlp = spacy.load('zh_core_web_sm') # Load the English Model
-
+nlp = spacy.load('zh_core_web_sm') 
 IGNORE_TAG = "Ignore"
 SEP_TOKEN = "</s>"
 NO_ERROR_TAG = "O"
@@ -35,7 +35,7 @@ def token_2_str(s_text):
     # token_str = tokenizer.convert_ids_to_tokens(tokenid['input_ids'])
     return token_str
 def check_sentence_end(text):
-    return text.strip() == '!' or text.strip() == '。' or text.strip() == '.' or text.strip() == '?' or text.strip() == '！'
+    return text.strip() == '!' or text.strip() == '。' or text.strip() == '?' or text.strip() == '！'
 
 def get_token_labels(
     args,
