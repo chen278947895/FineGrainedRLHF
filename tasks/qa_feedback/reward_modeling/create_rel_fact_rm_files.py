@@ -5,7 +5,7 @@ import argparse
 import re
 import os
 
-nlp = spacy.load('en_core_web_sm') # Load the English Model
+nlp = spacy.load('zh_core_web_sm') # Load the English Model
 
 IGNORE_TAG = "Ignore"
 SEP_TOKEN = "</s>"
